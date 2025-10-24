@@ -16,7 +16,8 @@ The lab uses **NAT + Host-Only networking**: all VMs can reach the internet via 
 - **Kali Linux (Attacker)** – Conducts reconnaissance and exploitation against the Windows VM.  
 
 ### The diagram below illustrates the network topology for the lab:  
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/30efc803-438b-47ce-87b3-cd0d98842502" />
+<img width="600" alt="Network Topology" src="https://github.com/user-attachments/assets/fbc91bc4-34f6-46ec-ab2f-3874acb9476e" />
+/>
 
 ## Prerequisites
 
@@ -294,22 +295,19 @@ Here are some Baseline Activity Logs I recorded:
 
 ### 1. 🗂️ File Activity
 
-
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/297a158f-5f86-4a50-816b-f89d3000a2d0" />
+<img width="600" alt="File Activity" src="https://github.com/user-attachments/assets/e868cbf1-ba14-4500-9cab-57f28f3bcadd" />
 
 ### 2. 🌐 Network Activity
 
-
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/e50f7bbb-50bf-409a-89dd-8654d64ce72b" />
+<img width="600" alt="Network Activity" src="https://github.com/user-attachments/assets/af683a23-46fb-45b4-afd9-c81a5f34377d" />
 
 ### 3. 🗂️ File Download
 
-
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/b4c3dfb5-ff26-4ecb-9877-2dd17335c084" />
+<img width="600" alt="File Download" src="https://github.com/user-attachments/assets/4e037c54-6c9f-4519-84c8-58fc7148d148" />
 
 ### 4. ⚙️ Command Line
 
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/e5fed116-82d1-4dac-b933-c8dbca7ab4e4" /> <img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/bad776e0-d9e0-44fa-b879-6f0848bcb428" />
+<img width="600" alt="cmd" src="https://github.com/user-attachments/assets/5409e345-62e3-407e-b77b-2fc83565ff1a" /> <img width="600" alt="IpConfig" src="https://github.com/user-attachments/assets/d06b082c-0962-4feb-9689-bdad31a54c4e" />
 
 ## ⚔️ Attack Simulation
 > **Safety note:** run all attack tools **only** in this isolated lab (Host-Only or bridged lab network). Do **not** run these tools against production, home, or public systems. Take a clean snapshot before running anything, and revert when finished. Never run on production or your home network.
@@ -328,7 +326,7 @@ Steps:
       - .\APTSimulator.bat
       - This is what you should see:
 
-<img width="600" alt="Image 10-21-25 at 11 43 AM" src="https://github.com/user-attachments/assets/ec9f512e-ae10-4c56-abfe-08ff8007bf7a" />
+<img width="600" alt="APTSimulator" src="https://github.com/user-attachments/assets/cf09d6ff-6495-4517-a1d3-57059216513b" />
 
    - Select an attack. Let it run through its scenario (usually < 1 minute). It performs many behaviors: PowerShell abuse, process creation, registry persistence, LSASS dumping, etc.
    - You should Expect Wazuh alerts for suspicious PowerShell commands, known malicious filenames/hashes, unusual process chains.
@@ -348,22 +346,24 @@ Verify
 
 ### 🔍 Examples of notable Events I recorded:
 
-<img width="600" alt="Image 10-23-25 at 6 59 AM" src="https://github.com/user-attachments/assets/0366ec10-99ec-4933-a97c-fd538c7d6f7f" />
+<img width="600" alt="Binary" src="https://github.com/user-attachments/assets/5de479b1-c942-41df-b861-c1c17f4eaf72" />
 
 > Example alert showing the detected event for a dropped/executed binary.
 
-<img width="600" alt="Image 10-23-25 at 6 57 AM" src="https://github.com/user-attachments/assets/e94b7bec-277b-4b22-a3be-c61f7bea2300" />
+
+<img width="600" alt="Powershell execution" src="https://github.com/user-attachments/assets/99c90778-c4c2-43a9-a5c4-d9364f7ed11c" />
 
 > Sysmon Operational event showing a PowerShell execution that created a temporary script/payload
 
 ### B. Manual Attack (Kali)
 
 Steps:
+
 1. Scan Windows Open ports using Nmap.
    - Type `sudo nmap -sV -O "windows-ip-address"`
    - You should see some open ports:
 
-<img width="600" alt="Image 10-24-25 at 10 53 AM" src="https://github.com/user-attachments/assets/bd5f57b4-acc8-46e0-a5ab-c4228ac5f93c" />
+<img width="600" alt="NMAP scan" src="https://github.com/user-attachments/assets/de6c3b7a-390a-4527-8462-b36e4fae010c" />
 
 
    - Port 22 is open, let's try to bruteforce into it.
@@ -371,7 +371,7 @@ Steps:
    - Just type: `hydra -l "username" -P "Password File Directory" ssh://"Ip_Address"`
    - Wazuh should show the failed log in log:
 
-<img width="600" alt="Image 10-24-25" src="https://github.com/user-attachments/assets/f8516a4c-6da6-4754-9794-0f4e2342976f" />
+<img width="600" alt="SSH failed log in" src="https://github.com/user-attachments/assets/e226e941-e1a0-4866-9804-2cbf560e1504" />
 
 > **💡 Note** The SSH brute-force example above is intentionally simple and performed only to generate log data and validate that the Windows Wazuh agent, the manager rules, and alerting are working end-to-end. This was a controlled, lab-only test — the attempt was expected to fail and was used only to confirm alert visibility. In real enterprise environments, detection is far more comprehensive: organizations use tuned rules, threat intelligence, behavioral analytics, anomaly detection, network controls to detect and block much more sophisticated attacks than a single-port brute force. Always run offensive or disruptive tests only on isolated lab systems you own and snapshot before/after.
 
